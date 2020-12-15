@@ -40,7 +40,7 @@ function readPedals()
   if rudder ~= Diff then
     rudder = Diff
     if use_brakes == 0 then
-      brake = 0.5       -- do not release breaks
+      brake = 0.5       -- do not release brakes
     end
   end
 end
