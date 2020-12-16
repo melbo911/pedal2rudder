@@ -27,10 +27,8 @@ function readAxisTypes()
     axis_type = get( "sim/joystick/joystick_axis_assignments", i )
     if axis_type == 6 then     -- left brake pedal ?
       left_axis = i
-    else
-      if axis_type == 7 then   -- right brake pedal ?
-        right_axis = i
-      end
+    elseif axis_type == 7 then   -- right brake pedal ?
+      right_axis = i
     end 
   end
 end
