@@ -1,6 +1,8 @@
 --
 -- left/right racing pedals to rudder/heading mapper
 --
+-- version 1.0 - 20201215 - melbo @x-plane.org
+--
 
 -- axis types
 -- 1 pitch
