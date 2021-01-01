@@ -1,7 +1,7 @@
 --
 -- left/right racing pedals to rudder/heading mapper
 --
--- version 1.0 - 20201215 - melbo @x-plane.org
+-- version 1.1 - 20210101 - melbo @x-plane.org
 --
 
 -- axis types
@@ -17,28 +17,31 @@ local use_brakes = 0    -- set to 0 when using helicopters with skids
 local left_axis  = 0
 local right_axis = 0
 
+local axis_type = dataref_table("sim/joystick/joystick_axis_assignments")
+local axis_values = dataref_table("sim/joystick/joystick_axis_values")
+local brake = dataref_table("sim/flightmodel/controls/parkbrake")
+local rudder = dataref_table("sim/joystick/yoke_heading_ratio")
+
 -- functions start here ------------------------
 
 function readAxisTypes()
-  local axis_type
-
   for i = 0, 499 do
-    -- get axis types 
-    axis_type = get( "sim/joystick/joystick_axis_assignments", i )
-    if axis_type == 6 then     -- left brake pedal ?
+    if axis_type[i] == 6 then     -- left brake pedal ?
       left_axis = i
-    elseif axis_type == 7 then   -- right brake pedal ?
-      right_axis = i
+    else
+      if axis_type[i] == 7 then   -- right brake pedal ?
+        right_axis = i
+      end
     end 
   end
 end
 
 function readPedals()
-  local Diff = left_brake - right_brake
-  if rudder ~= Diff then
-    rudder = Diff
+  local Diff = axis_values[left_axis] - axis_values[right_axis]
+  if rudder[0] ~= Diff then
+    rudder[0] = Diff
     if use_brakes == 0 then
-      brake = 0.5       -- do not release brakes
+      brake[0] = 0.5       -- do not release breaks
     end
   end
 end
@@ -50,12 +53,7 @@ readAxisTypes()
 if left_axis == 0 or right_axis == 0 then
   XPLMSpeakString("no brake axis defined") 
 else
-  DataRef("brake", "sim/flightmodel/controls/parkbrake", "writeable")
-  DataRef("rudder", "sim/joystick/yoke_heading_ratio", "writable")
-  DataRef("left_brake", "sim/joystick/joystick_axis_values", "readonly", left_axis)
-  DataRef("right_brake", "sim/joystick/joystick_axis_values", "readonly", right_axis)
-  XPLMSpeakString("brake axis mapped to rudder") 
-
+  -- XPLMSpeakString("brake axis mapped to rudder") 
   do_every_frame("readPedals()")
 end
 
